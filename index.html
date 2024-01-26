@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Browser</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+    }
+
+    .search-container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-bar {
+      width: 400px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+      font-size: 16px;
+      transition: width 0.3s, opacity 0.3s; /* Add transition for a smooth effect */
+    }
+
+    .search-bar:focus {
+      width: 600px; /* Adjust the width when the search bar is focused */
+    }
+
+    .search-bar.smaller {
+      width: 200px;
+      opacity: 0; /* Hide the search bar when smaller */
+      pointer-events: none; /* Disable pointer events on the hidden search bar */
+    }
+
+    .search-results {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block; /* Ensure the iframe is initially displayed */
+      margin-top: 10px; /* Add margin for better separation */
+    }
+  </style>
+</head>
+<body>
+  <div class="search-container">
+    <iframe class="search-results" id="searchResults" src="" frameborder="0"></iframe>
+    <input type="text" class="search-bar" id="searchInput" placeholder="Search..." onfocus="expandSearchBar()" onblur="shrinkSearchBar()" onkeypress="handleKeyPress(event)">
+  </div>
+
+  <script>
+    function expandSearchBar() {
+      const searchBar = document.getElementById('searchInput');
+      searchBar.classList.remove('smaller');
+    }
+
+    function shrinkSearchBar() {
+      const searchBar = document.getElementById('searchInput');
+      if (searchBar.value.trim() === "") {
+        searchBar.classList.add('smaller');
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent the default form submission
+        search();
+      }
+    }
+
+    function search() {
+      const searchInput = document.getElementById('searchInput').value;
+      const searchResults = document.getElementById('searchResults');
+      const searchContainer = document.querySelector('.search-container');
+      const searchBar = document.querySelector('.search-bar');
+
+      if (searchInput.trim() !== "") {
+        const bingSearchUrl = `https://www.bing.com/search?q=${encodeURIComponent(searchInput)}`;
+        searchResults.src = bingSearchUrl;
+
+        // Check if fullscreen mode is active
+        const isFullscreen = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+        
+        if (isFullscreen) {
+          // Fullscreen mode is active, hide the search bar
+          searchBar.classList.add('smaller');
+        } else {
+          // Not in fullscreen, show the search bar
+          searchBar.classList.remove('smaller');
+        }
+
+        // Center the iframe when it is shown
+        searchContainer.style.alignItems = 'center';
+        searchContainer.style.justifyContent = 'center';
+      } else {
+        // Center the search bar when there is no search query
+        searchResults.src = "";
+        searchContainer.style.alignItems = 'center';
+        searchContainer.style.justifyContent = 'center';
+      }
+    }
+  </script>
+</body>
+</html>
