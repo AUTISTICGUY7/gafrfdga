@@ -100,11 +100,22 @@
         // Center the iframe when it is shown
         searchContainer.style.alignItems = 'center';
         searchContainer.style.justifyContent = 'center';
+
+        // Add event listener to links in the iframe
+        const iframe = document.getElementById('searchResults');
+        iframe.contentWindow.document.addEventListener('click', handleLinkClick);
       } else {
         // Center the search bar when there is no search query
         searchResults.src = "";
         searchContainer.style.alignItems = 'center';
         searchContainer.style.justifyContent = 'center';
+      }
+    }
+
+    function handleLinkClick(event) {
+      if (event.target.tagName === 'A' && event.target.href) {
+        event.preventDefault();
+        window.open(event.target.href, '_blank'); // Open link in a new tab
       }
     }
   </script>
